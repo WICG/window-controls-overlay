@@ -27,6 +27,7 @@ This document is intended as a starting point for engaging the community and sta
  - [Privacy Considerations](#privacy-considerations)
  - [Open Questions](#open-questions)
 
+
 ## Introduction 
 
 Installed web apps hosted within a user agent (UA) frame are able to declare which browser display mode best meets the needs of the application via the manifest file's [`display` member](https://developer.mozilla.org/en-US/docs/Web/Manifest/display). Currently, there are 4 supported values and their behaviors on Chromium browsers are described below:
