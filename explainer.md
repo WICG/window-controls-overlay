@@ -84,7 +84,7 @@ None of this area is available to application developers. This is a problem wher
 ## Proposal
 
 The solution proposed in this explainer is in multiple parts
-1. A new display modifier option for the web app manifest - `"window-controls-overlay"`
+1. A new display override option for the web app manifest - `"window-controls-overlay"`
 2. New APIs for developers to query the bounding rects and other states of the UA provided window controls overlay which will overlay into the web content area through a new object on the `window.navigator` property called `windowControlsOverlay`
 3. New CSS environment variables to define the left and right insets from the edges of the window: `unsafe-area-top-inset-left` and `unsafe-area-top-inset-right`
 4. A standards-based way for developers to define system drag regions on their content
@@ -113,12 +113,12 @@ The window controls overlay will always be on top of the web content's Z order a
 
 If the OS and browser support a colored title bar, the window controls overlay would use the `"theme_color"` from the manifest as the background color. When hovered over and clicked, the controls should honor the operating system design behavior. If a colored title bar is not supported, the window controls overlay will be drawn in the theme supported by the OS and browser.
 
-The desire to place content into the title bar area and use an overlay for the window controls will be declared within the web app manifest by adding the `window-controls-overlay` display modifier and setting display mode to `standalone`. This display modifier will be ignored on Android and iOS or when used in conjunction with any other `display` modes.
+The desire to place content into the title bar area and use an overlay for the window controls will be declared within the web app manifest by adding the `window-controls-overlay` display override. This display override will be ignored on Android and iOS.
 
 ```json
 {
   "display": "standalone",
-  "display_modifiers": ["window-controls-overlay"]
+  "display_override": ["window-controls-overlay"]
 }
 ```
 
@@ -182,12 +182,12 @@ Below is an example of how these new features could be used to create a web appl
 ![Example code as a web app](CustomTitleBarExample.png)
 
 ### manifest.webmanifest
-In the manifest, set `"display": "standalone"` and `"display_modifiers": ["window-controls-overlay"]`. Set the `theme_color` to be the desired color of the title bar.
+In the manifest, set `"display_override": ["window-controls-overlay"]`. Set the `theme_color` to be the desired color of the title bar. Set the display mode to an appropriate fallback for when either `display_override` or `window-controls-overlay` is not supported. 
 ```JSON
 {
   "name": "Example PWA",
   "display": "standalone",
-  "display_modifiers": [ 
+  "display_override": [ 
     "window-controls-overlay" 
   ],
   "theme_color": "#254B85"
