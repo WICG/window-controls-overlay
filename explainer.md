@@ -84,9 +84,9 @@ None of this area is available to application developers. This is a problem wher
 ## Proposal
 
 The solution proposed in this explainer is in multiple parts
-1. A new display modifier option for the web app manifest - `"window-controls-overlay"`
+1. A new display override option for the web app manifest - `"window-controls-overlay"`
 2. New APIs for developers to query the bounding rects and other states of the UA provided window controls overlay which will overlay into the web content area through a new object on the `window.navigator` property called `windowControlsOverlay`
-3. New CSS environment variables to define the left and right insets from the edges of the window: `unsafe-area-top-inset-left` and `unsafe-area-top-inset-right`
+3. New CSS environment variables to define the edges of the available title bar area: `titlebar-area-inset-left`, `titlebar-area-inset-right`, `titlebar-area-inset-top`, and `titlebar-area-inset-bottom`
 4. A standards-based way for developers to define system drag regions on their content
 
 ### Overlaying Window Controls on a Frameless Window
@@ -113,12 +113,11 @@ The window controls overlay will always be on top of the web content's Z order a
 
 If the OS and browser support a colored title bar, the window controls overlay would use the `"theme_color"` from the manifest as the background color. When hovered over and clicked, the controls should honor the operating system design behavior. If a colored title bar is not supported, the window controls overlay will be drawn in the theme supported by the OS and browser.
 
-The desire to place content into the title bar area and use an overlay for the window controls will be declared within the web app manifest by adding the `window-controls-overlay` display modifier and setting display mode to `standalone`. This display modifier will be ignored on Android and iOS or when used in conjunction with any other `display` modes.
+The desire to place content into the title bar area and use an overlay for the window controls will be declared within the web app manifest by adding the `window-controls-overlay` display override. This display override will be ignored on Android and iOS.
 
 ```json
 {
-  "display": "standalone",
-  "display_modifiers": ["window-controls-overlay"]
+  "display_override": [ "window-controls-overlay" ]
 }
 ```
 
@@ -145,9 +144,13 @@ Whenever the overlay is resized, a `geometrychange` event will be fired on the `
 #### CSS Environment Variables
 Although it's possible to layout the content of the title bar and web page with just the JavaScript APIs provided above, they are not as responsive as a CSS solution. This is problematic either when the overlay resizes to accommodate the origin text or a new extension icon populates the overlay, or when the window resizes.
 
-The solution is to treat the overlay like a notch in a phone screen and layout the title bar area next to the window controls overlay "notch". The position of the overlay can be defined using the existing [`safe-area-inset-top`](https://developer.mozilla.org/en-US/docs/Web/CSS/env) CSS environment variable to determine the height, and two new CSS environment variables describing the left and right insets of the overlay: [`unsafe-area-top-inset-left/right`](https://github.com/w3c/csswg-drafts/issues/4721). See the [sample code](#example) below on one method of laying out the title bar using these CSS environment variables. 
+The solution is to add four new CSS environment variables which combine to define the available "titlebar" area next to the window controls overlay:
+ - `titlebar-area-inset-top`
+ - `titlebar-area-inset-bottom`
+ - `titlebar-area-inset-left`
+ - `titlebar-area-inset-right`
 
-We explored and rejected an alternative approach which instead uses CSS environment variables to describe the safe area of the title bar, `title-bar-area-[top/left/bottom/right]`. Although this "safe area" approach would be easier for developers to use than the "unsafe area" approach, it would be difficult to standardize given that it is such a niche use case (only available on installed desktop web apps). 
+See the [sample code](#example) below on one method of laying out the title bar using these CSS environment variables.
 
 ### Defining Draggable Regions in Web Content
 Web developers will need a standards-based way of defining which areas of their content within the general area of the title bar should be treated as draggable. The proposed solution is to standardize the existing CSS property: `-webkit-app-region`. 
@@ -182,12 +185,12 @@ Below is an example of how these new features could be used to create a web appl
 ![Example code as a web app](CustomTitleBarExample.png)
 
 ### manifest.webmanifest
-In the manifest, set `"display": "standalone"` and `"display_modifiers": ["window-controls-overlay"]`. Set the `theme_color` to be the desired color of the title bar.
+In the manifest, set `"display_override": ["window-controls-overlay"]`. Set the `theme_color` to be the desired color of the title bar. Set the display mode to an appropriate fallback for when either `display_override` or `window-controls-overlay` is not supported. 
 ```JSON
 {
   "name": "Example PWA",
   "display": "standalone",
-  "display_modifiers": [ 
+  "display_override": [ 
     "window-controls-overlay" 
   ],
   "theme_color": "#254B85"
@@ -226,17 +229,14 @@ The draggable regions are set using `app-region: drag` and `app-region: no-drag`
 
 On the `body`, margins are set to 0 to ensure the title bar reaches to the edges of the window.
 
-The `titleBarContainer` uses `position: absolute` and `top: 0` to fix itself to the top of the page. The height is set to `safe-area-inset-top` or to fall back to `--fallback-title-bar-height` if the window controls overlay is not visible. The background color of the `titleBarContainer` is the same as the `theme_color`. 
+The `titleBarContainer` uses `position: absolute` and sets the `top` to `titlebar-area-inset-top`, fixing the container to the top of the page. The `bottom` is set to `titlebar-area-inset-bottom` or to fall back to `100% - var(--fallback-title-bar-height)` if the window controls overlay is not visible. The background color of the `titleBarContainer` is the same as the `theme_color`. The width is set to `100%` so that the div fills the width of the page, and flows under the overlay when it is visible for a seamless appearance.
 
-The visible `titleBar` also uses `position: absolute` and `top: 0` to pin it to the top of the window. By default, it consumes the full width of the window. It also sets `user-select: none` to prevent any attempts at dragging the window to be consumed instead by highlighting text inside of the div.
+The `titleBar` also uses `position: absolute` and `top: titlebar-area-inset-top` to pin it to the top of the window. By default, it consumes the full width of the window. The `left` and `right` edges are set to `titlebar-area-inset-left` and `titlebar-area-inset-right` respectively, both falling back to `0` when these values aren't set. It also sets `user-select: none` to prevent any attempts at dragging the window to be consumed instead by highlighting text inside of the div.
 
-If the window controls overlay is on the right, then the `rightOverlay` class is added to the `titleBar`. This fixes the `titleBar` to the left side of the window and sets the `width` to be equal to the inset of the overlay from the left side of the window, `env(unsafe-area-top-inset-left)`. 
-
-If the window controls overlay is on the left, then the `leftOverlay` class is added to the `titleBar`. This fixes the `titleBar` to the right side of the window and sets the `width` to be equal to the inset of the overlay from the right side of the window, `env(unsafe-area-top-inset-right)`. 
-
-The container for the `mainContent` of the webpage is also fixed in place with `position: absolute`. It sets `overflow-y: scroll` to allow its contents to scroll vertically within the container.
+The container for the `mainContent` of the webpage is also fixed in place with `position: absolute` and is anchored to the bottom of the page. The `height` is set to `titlebar-area-inset-bottom`, or to fall back to `100% - var(--fallback-titlebar-height)`, filling in the remaining space below the title bar. It sets `overflow-y: scroll` to allow its contents to scroll vertically within the container.
 
 For cases where the browser does not support the window controls overlay, a CSS variable is added to set a fallback title bar height. The bounds of the `titleBarContainer` and `mainContent` are initially set to fill the entire client area, and do not need to be changed if the overlay is not supported.
+
 ```css
 :root {
   --fallback-title-bar-height: 40px;
@@ -257,8 +257,8 @@ body {
 
 #titleBarContainer {
   position: absolute;
-  top: 0;
-  height: var(--safe-area-inset-top, var(--fallback-title-bar-height));
+  top: env(titlebar-area-inset-top, 0);
+  bottom: env(titlebar-area-inset-bottom, calc(100% - var(--fallback-title-bar-height)));
   width: 100%;
   background-color:#254B85;
 }
@@ -269,21 +269,12 @@ body {
   display: flex;
   user-select: none;
   height: 100%;
-  width: 100%;
+  left: env(titlebar-area-inset-left, 0);
+  right: env(titlebar-area-inset-right, 0);
 
   color: #FFFFFF;
   font-weight: bold;
   text-align: center;
-}
-
-#titleBar.rightOverlay {
-  left: 0;
-  width: var(--unsafe-area-top-inset-left);
-}
-
-#titleBar.leftOverlay {
-  right: 0;
-  width: var(--unsafe-area-top-inset-right);
 }
 
 #titleBar > span {
@@ -304,33 +295,11 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  top: env(safe-area-inset-top, var(--fallback-title-bar-height));
+  height: env(titlebar-area-inset-bottom, calc(100% - var(--fallback-title-bar-height)));
   overflow-y: scroll;
 }
 ```
 
-### app.js
-We assume this web app will be launched in `browser` or `standalone` mode, so by default the title bar consumes the full width of the window. To accommodate the window controls overlay, we will need to first check if the overlay is visible, then, if it is visible, determine if it is in the upper-left or upper-right corner of the window. In `app.js`, check if `navigator.windowControlsOverlay.visible` is `true`, and if so, proceed to layout the custom title bar area. The overlay could either be in the upper-left corner or upper-right corner, depending on the operating system (Mac uses top left, Windows uses top right) and the browser language direction (if the browser is in an RTL language then the title bar is inverted horizontally). If the bounding rect of the overlay has an `x` value of `0`, then that implies that the overlay is on the left . If value of `rect.x` is greater than `0`, then the overlay is on the right. Set either the `leftOverlay` or `rightOverlay` class appropriately.
-
-```javascript
-// initialize the title bar to avoid the window controls overlay which
-// could be in either the top right or top left corner
-const initializeTitleBar = () => {
-  const titleBar = document.getElementById("titleBar");
-  const rect = window.navigator.windowControlsOverlay.getBoundingClientRect();
-
-  // rect.x will be 0 if the overlay is on the left
-  if (rect.x === 0) {
-    titleBar.classList.add("leftOverlay");
-  } else {
-    titleBar.classList.add("rightOverlay");
-  }
-};
-
-if (window.navigator.windowControlsOverlay && window.navigator.windowControlsOverlay.visible) {
-  initializeTitleBar();
-}
-```
 
 ## Security Considerations
 
