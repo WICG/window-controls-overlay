@@ -152,8 +152,6 @@ The solution is to add four new CSS environment variables which combine to defin
 
 See the [sample code](#example) below on one method of laying out the title bar using these CSS environment variables.
 
-**<p style="color:red">This would benefit from a diagram. Show a WCO app, and each of the bounds rect that this defines. Bonus points for Mac since it shows the left bound better :)</p>**
-
 ### Defining Draggable Regions in Web Content
 Web developers will need a standards-based way of defining which areas of their content within the general area of the title bar should be treated as draggable. The proposed solution is to standardize the existing CSS property: `-webkit-app-region`. 
 
