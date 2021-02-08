@@ -244,12 +244,14 @@ For cases where the browser does not support the window controls overlay, a CSS 
 
 .draggable {
   app-region: drag;
-  -webkit-app-region: drag; /* required until app-region is standardized*/
+  /* Pre-fix app-region during standardization process */
+  -webkit-app-region: drag;
 }
 
 .nonDraggable {
   app-region: no-drag;
-  -webkit-app-region: no-drag; /* required until app-region is standardized*/
+  /* Pre-fix app-region during standardization process */
+  -webkit-app-region: no-drag;
 }
 
 body {
