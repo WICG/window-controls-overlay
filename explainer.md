@@ -86,7 +86,7 @@ None of this area is available to application developers. This is a problem wher
 The solution proposed in this explainer is in multiple parts
 1. A new display override option for the web app manifest - `"window-controls-overlay"`
 2. New APIs for developers to query the bounding rects and other states of the UA provided window controls overlay which will overlay into the web content area through a new object on the `window.navigator` property called `windowControlsOverlay`
-3. New CSS environment variables to define the edges of the available title bar area: `titlebar-area-inset-left`, `titlebar-area-inset-right`, `titlebar-area-inset-top`, and `titlebar-area-inset-bottom`
+3. New CSS environment variables to define the bounds of the available title bar area: `titlebar-area-x`, `titlebar-area-y`, `titlebar-area-width`, and `titlebar-area-height`
 4. A standards-based way for developers to define system drag regions on their content
 
 ### Overlaying Window Controls on a Frameless Window
@@ -145,10 +145,10 @@ Whenever the overlay is resized, a `geometrychange` event will be fired on the `
 Although it's possible to layout the content of the title bar and web page with just the JavaScript APIs provided above, they are not as responsive as a CSS solution. This is problematic either when the overlay resizes to accommodate the origin text or a new extension icon populates the overlay, or when the window resizes.
 
 The solution is to add four new CSS environment variables which combine to define the available "titlebar" area next to the window controls overlay:
- - `titlebar-area-inset-top`
- - `titlebar-area-inset-bottom`
- - `titlebar-area-inset-left`
- - `titlebar-area-inset-right`
+ - `titlebar-area-x`
+ - `titlebar-area-y`
+ - `titlebar-area-width`
+ - `titlebar-area-height`
 
 See the [sample code](#example) below on one method of laying out the title bar using these CSS environment variables.
 
@@ -229,11 +229,11 @@ The draggable regions are set using `app-region: drag` and `app-region: no-drag`
 
 On the `body`, margins are set to 0 to ensure the title bar reaches to the edges of the window.
 
-The `titleBarContainer` uses `position: absolute` and sets the `top` to `titlebar-area-inset-top`, fixing the container to the top of the page. The `bottom` is set to `titlebar-area-inset-bottom` or to fall back to `100% - var(--fallback-title-bar-height)` if the window controls overlay is not visible. The background color of the `titleBarContainer` is the same as the `theme_color`. The width is set to `100%` so that the div fills the width of the page, and flows under the overlay when it is visible for a seamless appearance.
+The `titleBarContainer` uses `position: absolute` and sets the `top` to `titlebar-area-y`, fixing the container to the top of the page. The `height` is set to `titlebar-area-height` or to fall back to `var(--fallback-title-bar-height)` if the window controls overlay is not visible. The background color of the `titleBarContainer` is the same as the `theme_color`. The width is set to `100%` so that the div fills the width of the page, and flows under the overlay when it is visible for a seamless appearance.
 
-The `titleBar` also uses `position: absolute` and `top: titlebar-area-inset-top` to pin it to the top of the window. By default, it consumes the full width of the window. The `left` and `right` edges are set to `titlebar-area-inset-left` and `titlebar-area-inset-right` respectively, both falling back to `0` when these values aren't set. It also sets `user-select: none` to prevent any attempts at dragging the window to be consumed instead by highlighting text inside of the div.
+The `titleBar` also uses `position: absolute` and `top: titlebar-area-y` to pin it to the top of the window. The `left` edge is set to `titlebar-area-x` with a fallback of `0`, and the `width` is set to `titlebar-area-width` with a fallback of `100%`, so that it defaults to consume the full width of the window. It also sets `user-select: none` to prevent any attempts at dragging the window to be consumed instead by highlighting text inside of the div.
 
-The container for the `mainContent` of the webpage is also fixed in place with `position: absolute` and is anchored to the bottom of the page. The `height` is set to `titlebar-area-inset-bottom`, or to fall back to `100% - var(--fallback-titlebar-height)`, filling in the remaining space below the title bar. It sets `overflow-y: scroll` to allow its contents to scroll vertically within the container.
+The container for the `mainContent` of the webpage is also fixed in place with `position: absolute` and is anchored to the bottom of the page with `bottom: 0`. The `top` is set to `titlebar-area-height` with a fallback of `var(--fallback-titlebar-height)` so that it meets the bottom oedge of the title bar. It sets `overflow-y: scroll` to allow its contents to scroll vertically within the container.
 
 For cases where the browser does not support the window controls overlay, a CSS variable is added to set a fallback title bar height. The bounds of the `titleBarContainer` and `mainContent` are initially set to fill the entire client area, and do not need to be changed if the overlay is not supported.
 
@@ -261,8 +261,8 @@ body {
 
 #titleBarContainer {
   position: absolute;
-  top: env(titlebar-area-inset-top, 0);
-  bottom: env(titlebar-area-inset-bottom, calc(100% - var(--fallback-title-bar-height)));
+  top: env(titlebar-area-y, 0);
+  height: env(titlebar-area-height, var(--fallback-title-bar-height));
   width: 100%;
   background-color:#254B85;
 }
@@ -273,8 +273,8 @@ body {
   display: flex;
   user-select: none;
   height: 100%;
-  left: env(titlebar-area-inset-left, 0);
-  right: env(titlebar-area-inset-right, 0);
+  left: env(titlebar-area-x, 0);
+  width: env(titlebar-area-width, 100%);
 
   color: #FFFFFF;
   font-weight: bold;
@@ -299,7 +299,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  height: env(titlebar-area-inset-bottom, calc(100% - var(--fallback-title-bar-height)));
+  top: env(titlebar-area-height, var(--fallback-title-bar-height));
   overflow-y: scroll;
 }
 ```
