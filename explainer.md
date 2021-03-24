@@ -233,7 +233,7 @@ The `titleBarContainer` uses `position: absolute` and sets the `top` to `titleba
 
 The `titleBar` also uses `position: absolute` and `top: titlebar-area-y` to pin it to the top of the window. The `left` edge is set to `titlebar-area-x` with a fallback of `0`, and the `width` is set to `titlebar-area-width` with a fallback of `100%`, so that it defaults to consume the full width of the window. It also sets `user-select: none` to prevent any attempts at dragging the window to be consumed instead by highlighting text inside of the div.
 
-The container for the `mainContent` of the webpage is also fixed in place with `position: absolute` and is anchored to the bottom of the page with `bottom: 0`. The `top` is set to `titlebar-area-height` with a fallback of `var(--fallback-titlebar-height)` so that it meets the bottom oedge of the title bar. It sets `overflow-y: scroll` to allow its contents to scroll vertically within the container.
+The container for the `mainContent` of the webpage is also fixed in place with `position: absolute` and is anchored to the bottom of the page with `bottom: 0`. The `top` is set to `titlebar-area-height` with a fallback of `var(--fallback-titlebar-height)` so that it meets the bottom edge of the title bar. It sets `overflow-y: scroll` to allow its contents to scroll vertically within the container.
 
 For cases where the browser does not support the window controls overlay, a CSS variable is added to set a fallback title bar height. The bounds of the `titleBarContainer` and `mainContent` are initially set to fill the entire client area, and do not need to be changed if the overlay is not supported.
 
