@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Window Controls Overlay</title>
+    <script
+      src="https://www.w3.org/Tools/respec/respec-w3c"
+      class="remove"
+      defer
+    ></script>
+    <script class="remove">
+      // All config options at https://respec.org/docs/
+      var respecConfig = {
+        specStatus: "CG-DRAFT",
+        editors: [{ name: "Diego González",
+                    url: "https://twitter.com/diekus",
+                    company: "Microsoft",
+                    companyURL: "https://www.microsoft.com"}],
+        github: "WICG/window-controls-overlay",
+        xref: ["web-platform", "appmanifest"],
+        group: "wicg",
+
+      };
+    </script>
+  </head>
+  <body>
+    <section id="abstract">
+      <p>This document specifies a set of technologies that allow a Web developer to customize the title bar of an installed Web application running in a desktop environment. These technologies are known as Window Controls Overlay (<abbr title="Window Controls Overlay">WCO</abbr>).</p>
+    </section>
+    <section id="sotd">
+      <p>This draft is meant to serve as a starting point for the standardization process of WCO and the technologies described in it might be migrated to other specifications on different working groups.</p>
+    </section>
+    <section class="informative">
+      <h2>Introduction</h2>
+      <p>Installed web apps hosted within a user agent (UA) frame are able to declare which browser display mode best meets the needs of the application via the [=manifest=] file's `display` member. Developers targeting non-mobile devices looking to create an immersive, native-like title bar for their installed application may want to utilize this area, but it is not supported via the aforementioned `display` member. Instead, the client area begins immediately below the reserved title bar area, which can create a cramped application space especially on portable devices with smaller screens.</p>
+      <p>Window Controls Overlay addresses this challenge by introducing a set of technologies throughout JS and CSS that allow to the web content area to expand over the title bar area, remaining only the area corresponding to the overlay that houses the controls of the window.</p>
+
+    </section>
+    <section>
+      <h2>Extensions to the `Navigator` interface</h2>
+      <p>
+        The [[HTML]] specification defines the <dfn>Navigator</dfn> interface, which this
+        specification extends:
+      </p>
+      <pre class="idl">
+        [SecureContext, Exposed=(Window)]
+        partial interface Navigator {
+          [SameObject] readonly attribute WindowControlsOverlay windowControlsOverlay;
+        };
+      </pre>
+      <section>
+        <h3>`windowControlsOverlay` attribute</h3>
+      </section>
+      <p>The {{navigator.windowControlsOverlay}} attribute is an instance of
+        {{WindowControlsOverlay}}. This attribute provides the current visibility of the overlay, the bounding rectangular area of the overlay, and whether there was an ongeometrychange event to that area of the overlay.
+        The <a>user agent</a> MUST run the <a>update the overlay area
+        information</a> algorithm steps to initialize the values and return
+        the {{Navigator.windowControlsOverlay}} attribute.</p>
+    </section>
+    <section data-dfn-for='WindowControlsOverlay' data-link-for=
+    'WindowControlsOverlay'>
+      <h2>
+        <dfn>WindowControlsOverlay</dfn> interface
+      </h2>
+      <pre class='idl' data-cite="DOM HTML">
+        [Exposed=Navigator]
+        interface WindowControlsOverlay : EventTarget {
+          readonly attribute boolean visible;
+          readonly attribute DomRect getBoundingClientRect;
+          attribute EventHandler ongeometrychange;
+        };
+      </pre>
+      <section>
+        <h3>The <dfn>visible</dfn> attribute</h3>
+        <p>The `visible` attribute is a boolean that determines if the window controls overlay has been rendered.</p>
+      </section>
+      <section>
+        <h3>The <dfn>getBoundingClientRect</dfn> method</h3>
+        <p>The `getBoundingClientRect()` method returns a DOMRect that represents the area under the window controls overlay. Web content SHOULD not be displayed beneath the overlay.</p>
+      </section>
+      <section>
+        <h3>The <dfn>ongeometrychange</dfn> attribute</h3>
+        <p>The `ongeometrychange` attribute is an event handler whose corresponding event handler event type is "change".</p>
+      </section>
+    </section>
+    <section>
+      <h2>
+        Addition of `window-controls-overlay` to the manifest
+      </h2>
+      <p>
+        To enable the WCO feature, a new value will be added to the `display-override` member of the manifest file. The `window-controls-overlay` value . 
+      </p>
+    </section>
+    <section>
+      <h2>CSS environmental variables</h2>
+      <aside class="issue">
+        <p>This is draft text for features that might belong in other specifications. This document might not be the final venue for some of the work specified in this draft.</p>
+      </aside>
+      <section>
+        <h3>Title bar area variables</h3>
+        <table dfn-type=value dfn-for="env()">
+          <tr>
+            <th>Name
+            <th>Value
+          <tr>
+            <td><dfn>`titlebar-area-x`</dfn>
+            <td><<length>>
+          <tr>
+            <td><dfn>`titlebar-area-y`</dfn>
+            <td><<length>>
+          <tr>
+            <td><dfn>`titlebar-area-width`</dfn>
+            <td><<length>>
+          <tr>
+            <td><dfn>`titlebar-area-height`</dfn>
+            <td><<length>>
+        </table>
+        <p>The title bar area variables are four [=environmental variables=] that define a rectangle by the width and height from a starting point in the viewport. This area corresponds to the area of the title bar, and allows to position dynamic Web content inside its bounds.</p>
+      </section>
+    </section>
+    <section>
+      <h2>Defining draggable sections</h2>
+    </section>
+    <section>
+      <h2>Algorithms</h2>
+      <section>
+        <h3>Update the overlay area information</h3>
+        <p>
+          The steps to <dfn>update the overlay information</dfn> of a
+          {{Document}} are as follows:
+        </p>
+        <ol class="algorithm">
+          <li>If the screen width is greater than the screen height, set the
+          {{Document}}'s <a>current orientation type</a> to
+          <a>landscape-primary</a> or <a>landscape-secondary</a>.
+          </li>
+          <li>Otherwise, if the screen width is less than or equal to the
+          screen height, set the {{Document}}'s <a>current orientation type</a>
+          to <a>portrait-primary</a> or <a>portrait-secondary</a>.
+          </li>
+          <li data-tests="orientation-reading.html">Set the {{Document}}'s <a>
+            current orientation angle</a> to the clockwise angle in degrees
+            between the orientation of the viewport as it is drawn and the
+            <a>natural</a> orientation of the device (i.e., the top of the
+            physical screen). This is the opposite of the physical rotation. In
+            other words, if a device is turned 90 degrees on the right, the
+            <a>current orientation angle</a> would be 270 degrees. The
+            <a>screen orientation values table</a> gives the options for each
+            orientation and possible associated angles.
+          </li>
+        </ol>
+      </section>
+    </section>
+    <section id="conformance">
+    </section>
+  </body>
+</html>
