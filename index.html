@@ -88,7 +88,7 @@
         Addition of `window-controls-overlay` to the manifest
       </h2>
       <p>
-        To enable the WCO feature, a new value will be added to the `display-override` member of the manifest file. The `window-controls-overlay` value . 
+        To enable the WCO feature, a new value will be added to the `display-override` member of the manifest file. When the `window-controls-overlay` value is specified in the `display-override` the user agent SHOULD extend the client area to the title bar. 
       </p>
     </section>
     <section>
@@ -120,6 +120,7 @@
     </section>
     <section>
       <h2>Defining draggable sections</h2>
+      <p></p>
     </section>
     <section>
       <h2>Algorithms</h2>
@@ -130,24 +131,7 @@
           {{Document}} are as follows:
         </p>
         <ol class="algorithm">
-          <li>If the screen width is greater than the screen height, set the
-          {{Document}}'s <a>current orientation type</a> to
-          <a>landscape-primary</a> or <a>landscape-secondary</a>.
-          </li>
-          <li>Otherwise, if the screen width is less than or equal to the
-          screen height, set the {{Document}}'s <a>current orientation type</a>
-          to <a>portrait-primary</a> or <a>portrait-secondary</a>.
-          </li>
-          <li data-tests="orientation-reading.html">Set the {{Document}}'s <a>
-            current orientation angle</a> to the clockwise angle in degrees
-            between the orientation of the viewport as it is drawn and the
-            <a>natural</a> orientation of the device (i.e., the top of the
-            physical screen). This is the opposite of the physical rotation. In
-            other words, if a device is turned 90 degrees on the right, the
-            <a>current orientation angle</a> would be 270 degrees. The
-            <a>screen orientation values table</a> gives the options for each
-            orientation and possible associated angles.
-          </li>
+          <li>When the window or the controls overlay area resizes, the user agent updates the environmental variables to reflect the new available space in the titlebar.</li>
         </ol>
       </section>
     </section>
