@@ -339,16 +339,3 @@ _Out-of-scope: reverting to the `standalone` title bar_
 Enabling Window Controls Overlay poses an increased fingerprinting surface since the size of the overlay can vary depending on the OS, the text scale, the OS font size, the OS zoom factor, and the web content’s zoom factor.  
 
 Although this is a potential fingerprinting issue, it only applies to installed desktop web apps that use the window controls overlay feature and does not apply to general browser usage. Additionally, the `windowControlsOverlay` API will not be available to iframes embedded inside of an installed web app.
-
-## Open Questions
-
-### Open Questions: Overlaying Window Controls
-- Should the height of the title bar be customizable?
-- If so, a fixed set of sizes (small, medium, large) or a pixel value that is constrained by the UA?
-
-### Open Questions: Working Around the Window Controls Overlay
-- Would it be valuable to an additional member,`window.navigator.windowControlsOverlay.controls` which has boolean member properties to provide information on which of the window controls are currently being rendered? This would include `maximize`, `minimize`, `restore`, `close` among other values that are implementation specific, for example a small `dragRegion` area and `settings` menu.  
-
-### Open Questions: Defining Draggable Regions in Web Content
-- Different operating systems could have requirements for draggable regions. One approach could be to have a drag region that runs 100% width but only comes down a small number of pixels from the top of the frame. This could provide a consistent area for end users to grab and drag at the cost of reducing the addressable real estate for web content. Is this desirable?
-- Could a DOM property on an element be used to identify drag regions on the content?
