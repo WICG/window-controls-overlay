@@ -40,22 +40,22 @@ This explainer will examine different techniques that could be developed to prov
 
 ## Examples of desktop apps customizing the title bar area 
 
-The title bar area of desktop applications is customized in many popular applications. The title bar area refers to the space to the left or right of the window controls (minimize, maximize, close etc.) and often contains the title of the application. On Windows, this area can be customized by the developer and apps based on Electron often reclaim this title bar space for frequently used UI like a search box, profile icon, new message icon etc.
+The title bar area of desktop applications is customized in many popular applications. The title bar area refers to the space to the left or right of the window controls (minimize, maximize, close etc.) and often contains the title of the application. On Windows, this area can be customized by the developer and apps based on Electron or Chromium Embedded Framework often reclaim this title bar space for frequently used UI like a search box, profile icon, new message icon etc.
 
 ### Visual Studio Code
-Visual Studio Code is a popular code editor built on Electron that ships on multiple desktop platforms.
+Visual Studio Code is a popular code editor that ships on multiple desktop platforms.
 
 This screen shot shows how VS Code uses the title bar to maximize available screen real estate. They include the file name of the currently opened file and the top-level menu structure within the title bar space.
 
 ![Visual Studio Code title bar](VSCode.png)
 
 ### Spotify
-Popular streaming music service Spotify is built on Chromium Embedded Framework (CEF) and they use the title bar space to maximize screen real estate to show the currently signed in user account, a search box and forward/back buttons designed specifically for the Spotify experience.
+Popular streaming music service Spotify uses the title bar space to maximize screen real estate to show the currently signed in user account, a search box and forward/back buttons designed specifically for the Spotify experience.
 
 ![Spotify title bar](Spotify.png)
 
 ### Microsoft Teams
-Workplace collaboration and communication tool Microsoft Teams, also based on Electron for portability, customize the title bar in a similar fashion to Spotify, providing user information, a search and command bar and their own back/forward in-app navigation controls. 
+Workplace collaboration and communication tool Microsoft Teams customizes the title bar in a similar fashion to Spotify, providing user information, a search and command bar and their own back/forward in-app navigation controls. 
 
 ![Microsoft Teams title bar on Mac](MSTeams.png)
 
