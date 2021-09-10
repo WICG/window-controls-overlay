@@ -50,7 +50,7 @@ This screen shot shows how VS Code uses the title bar to maximize available scre
 ![Visual Studio Code title bar](VSCode.png)
 
 ### Spotify
-Popular streaming music service Spotify is also built on Electron and they use the title bar space to maximize screen real estate to show the currently signed in user account, a search box and forward/back buttons designed specifically for the Spotify experience.
+Popular streaming music service Spotify is built on Chromium Embedded Framework (CEF) and they use the title bar space to maximize screen real estate to show the currently signed in user account, a search box and forward/back buttons designed specifically for the Spotify experience.
 
 ![Spotify title bar](Spotify.png)
 
