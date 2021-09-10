@@ -25,7 +25,6 @@ This document is intended as a starting point for engaging the community and sta
    - [Spoofing risks](#spoofing-risks)
    - [Out-of-scope Navigation](#out-of-scope-navigation)
  - [Privacy Considerations](#privacy-considerations)
- - [Open Questions](#open-questions)
 
 ## Introduction 
 
