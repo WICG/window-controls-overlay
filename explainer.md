@@ -25,7 +25,6 @@ This document is intended as a starting point for engaging the community and sta
    - [Spoofing risks](#spoofing-risks)
    - [Out-of-scope Navigation](#out-of-scope-navigation)
  - [Privacy Considerations](#privacy-considerations)
- - [Open Questions](#open-questions)
 
 ## Introduction 
 
@@ -41,22 +40,22 @@ This explainer will examine different techniques that could be developed to prov
 
 ## Examples of desktop apps customizing the title bar area 
 
-The title bar area of desktop applications is customized in many popular applications. The title bar area refers to the space to the left or right of the window controls (minimize, maximize, close etc.) and often contains the title of the application. On Windows, this area can be customized by the developer and apps based on Electron often reclaim this title bar space for frequently used UI like a search box, profile icon, new message icon etc.
+The title bar area of desktop applications is customized in many popular applications. The title bar area refers to the space to the left or right of the window controls (minimize, maximize, close etc.) and often contains the title of the application. On Windows, this area can be customized by the developer and apps based on Electron or Chromium Embedded Framework often reclaim this title bar space for frequently used UI like a search box, profile icon, new message icon etc.
 
 ### Visual Studio Code
-Visual Studio Code is a popular code editor built on Electron that ships on multiple desktop platforms.
+Visual Studio Code is a popular code editor that ships on multiple desktop platforms.
 
 This screen shot shows how VS Code uses the title bar to maximize available screen real estate. They include the file name of the currently opened file and the top-level menu structure within the title bar space.
 
 ![Visual Studio Code title bar](VSCode.png)
 
 ### Spotify
-Popular streaming music service Spotify is also built on Electron and they use the title bar space to maximize screen real estate to show the currently signed in user account, a search box and forward/back buttons designed specifically for the Spotify experience.
+Popular streaming music service Spotify uses the title bar space to maximize screen real estate to show the currently signed in user account, a search box and forward/back buttons designed specifically for the Spotify experience.
 
 ![Spotify title bar](Spotify.png)
 
 ### Microsoft Teams
-Workplace collaboration and communication tool Microsoft Teams, also based on Electron for portability, customize the title bar in a similar fashion to Spotify, providing user information, a search and command bar and their own back/forward in-app navigation controls. 
+Workplace collaboration and communication tool Microsoft Teams customizes the title bar in a similar fashion to Spotify, providing user information, a search and command bar and their own back/forward in-app navigation controls. 
 
 ![Microsoft Teams title bar on Mac](MSTeams.png)
 
@@ -336,19 +335,6 @@ _Out-of-scope: reverting to the `standalone` title bar_
 
 ## Privacy Considerations
 
-Enabling the window controls overlay and draggable regions do not pose considerable privacy concerns other than feature detection. However, due to differing sizes and positions of the window control buttons across operating systems, the JavaScript API for `window.navigator.windowControlsOverlay.getBoundingClientRect()` will return a rect whose position and dimensions will reveal information about the operating system upon which the browser is running. Currently, developers can already discover the OS from the user agent string, but due to fingerprinting concerns there is discussion about [freezing the UA string and unifying OS versions](https://groups.google.com/a/chromium.org/forum/m/#!msg/blink-dev/-2JIRNMWJ7s/yHe4tQNLCgAJ). We would like to work with the community to understand how frequently the size of the window controls overlay changes across platforms, as we believe that these are fairly stable across OS versions and thus would not be useful for observing minor OS versions.
+Enabling Window Controls Overlay poses an increased fingerprinting surface since the size of the overlay can vary depending on the OS, the text scale, the OS font size, the OS zoom factor, and the web content’s zoom factor.  
 
 Although this is a potential fingerprinting issue, it only applies to installed desktop web apps that use the window controls overlay feature and does not apply to general browser usage. Additionally, the `windowControlsOverlay` API will not be available to iframes embedded inside of an installed web app.
-
-## Open Questions
-
-### Open Questions: Overlaying Window Controls
-- Should the height of the title bar be customizable?
-- If so, a fixed set of sizes (small, medium, large) or a pixel value that is constrained by the UA?
-
-### Open Questions: Working Around the Window Controls Overlay
-- Would it be valuable to an additional member,`window.navigator.windowControlsOverlay.controls` which has boolean member properties to provide information on which of the window controls are currently being rendered? This would include `maximize`, `minimize`, `restore`, `close` among other values that are implementation specific, for example a small `dragRegion` area and `settings` menu.  
-
-### Open Questions: Defining Draggable Regions in Web Content
-- Different operating systems could have requirements for draggable regions. One approach could be to have a drag region that runs 100% width but only comes down a small number of pixels from the top of the frame. This could provide a consistent area for end users to grab and drag at the cost of reducing the addressable real estate for web content. Is this desirable?
-- Could a DOM property on an element be used to identify drag regions on the content?
