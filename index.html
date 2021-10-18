@@ -96,14 +96,14 @@
         <dfn>WindowControlsOverlay</dfn> interface
       </h2>
       <pre class='idl' data-cite="DOM HTML">
-        [RuntimeEnabled=WebAppWindowControlsOverlay, Exposed=Window]
+        [Exposed=Window]
         interface WindowControlsOverlay : EventTarget {
           readonly attribute boolean visible;
           DOMRect getBoundingClientRect();
           attribute EventHandler ongeometrychange;
         };
 
-        [Exposed=Window, RuntimeEnabled=WebAppWindowControlsOverlay]
+        [Exposed=Window]
         interface WindowControlsOverlayGeometryChangeEvent : Event {
           constructor(DOMString type, WindowControlsOverlayGeometryChangeEventInit eventInitDict);
           [SameObject] readonly attribute DOMRect boundingRect;
