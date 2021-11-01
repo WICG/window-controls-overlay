@@ -44,21 +44,14 @@
         Introduction
       </h2>
       <p>
-        Installed web apps hosted within a user agent (UA) frame are able to
-        declare which browser display mode best meets the needs of the
-        application via the [=manifest=] file's `display` member. Developers
-        targeting non-mobile devices looking to create an immersive,
-        native-like title bar for their installed application may want to
-        utilize this area, but it is not supported via the aforementioned
-        `display` member. Instead, the client area begins immediately below the
-        reserved title bar area, which can create a cramped application space
-        especially on portable devices with smaller screens.
+        Applications targeting non-mobile devices are hosted within frames that commonly have a title bar. A title bar is a UI element generally represented as a horizontal bar at the top of a window, bearing the name of the active program or the name of the current active document and and the [=window controls=]. The <dfn data-lt="controls of the window">window controls</dfn> are the interface elements that the operating system uses consistently across applications to enable the user to perform certain actions to control the application. Common actions in the [=window controls=] include minimize, maximize/restore, and close buttons.</p>
+      <p> For installed web apps hosted within a user agent (UA) frame, it is possible to declare which type of frame to use via the browser display mode. Developers can select the mode that best meets the needs of the application via the [=manifest=] file's `display` member. Developers targeting non-mobile devices looking to create an immersive, native-like title bar for their installed application may want to utilize the title bar area, but this is not supported via the aforementioned `display` member. Instead, the client area begins immediately below the reserved title bar area, which can create a cramped application space specially on portable devices with smaller screens.
       </p>
       <p>
-        Window Controls Overlay addresses this challenge by introducing a set
+        <dfn>Window Controls Overlay</dfn> is a feature for installed web applications running on non-mobile environments that addresses this challenge by introducing a set
         of technologies throughout JS and CSS that allow to the web content
         area to expand over the title bar area, remaining only the area
-        corresponding to the overlay that houses the controls of the window.
+        corresponding to the overlay that houses the [=controls of the window=].
       </p>
     </section>
     <section>
