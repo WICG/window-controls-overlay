@@ -44,21 +44,14 @@
         Introduction
       </h2>
       <p>
-        Installed web apps hosted within a user agent (UA) frame are able to
-        declare which browser display mode best meets the needs of the
-        application via the [=manifest=] file's `display` member. Developers
-        targeting non-mobile devices looking to create an immersive,
-        native-like title bar for their installed application may want to
-        utilize this area, but it is not supported via the aforementioned
-        `display` member. Instead, the client area begins immediately below the
-        reserved title bar area, which can create a cramped application space
-        especially on portable devices with smaller screens.
+        Applications targeting non-mobile devices are hosted within frames that commonly have a title bar. A title bar is a UI element generally represented as a horizontal bar at the top of a window, bearing the name of the active program or the name of the current active document and and the [=window controls=]. The <dfn data-lt="controls of the window">window controls</dfn> are the interface elements that the operating system uses consistently across applications to enable the user to perform certain actions to control the application. Common actions in the [=window controls=] include minimize, maximize/restore, and close buttons.</p>
+      <p> For installed web apps hosted within a user agent (UA) frame, it is possible to declare which type of frame to use via the browser display mode. Developers can select the mode that best meets the needs of the application via the [=manifest=] file's `display` member. Developers targeting non-mobile devices looking to create an immersive, native-like title bar for their installed application may want to utilize the title bar area, but this is not supported via the aforementioned `display` member. Instead, the client area begins immediately below the reserved title bar area, which can create a cramped application space specially on portable devices with smaller screens.
       </p>
       <p>
-        Window Controls Overlay addresses this challenge by introducing a set
+        <dfn>Window Controls Overlay</dfn> is a feature for installed web applications running on non-mobile environments that addresses this challenge by introducing a set
         of technologies throughout JS and CSS that allow to the web content
         area to expand over the title bar area, remaining only the area
-        corresponding to the overlay that houses the controls of the window.
+        corresponding to the <dfn data-lt="overlaid">overlay</dfn> that houses the [=controls of the window=].
       </p>
     </section>
     <section>
@@ -125,8 +118,13 @@
         </h3>
         <p>
           The `getBoundingClientRect()` method returns a DOMRect that
-          represents the area under the window controls overlay. Web content
+          represents the available area for displaying web content. This available title bar region does not include the area under the [=window controls=] [=overlay=]. Web content
           SHOULD not be displayed beneath the overlay.
+          <aside class="note">
+            <p>
+              The client viewport does not make any special considerations when rendering content with the WCO feature enabled. The content will be displayed in the same way that it would be displayed inside the browser window. In order to avoid content being hidden by the area where the [=window controls=] are [=overlaid=], developers must use the `getBoundingClientRect` method or the [=title bar area env variables=].
+            </p>
+          </aside>
         </p>
       </section>
       <section>
@@ -135,8 +133,12 @@
         </h3>
         <p>
           The `ongeometrychange` attribute is an event handler whose
-          corresponding event handler event type is "change".
+          corresponding event handler event type is "change". The event is dispatched when the available title bar region changes, e.g., in response to the UA displaying the scope's origin during the launch of the app, an extension or feature like file access or download displaying an icon as part of the [=window controls=] [=overlay=], or the window being resized.
         </p>
+        <p>The event must follow these steps:</p>
+        <ol>
+          <li></li>
+        </ol>
       </section>
     </section>
     <section>
@@ -152,7 +154,7 @@
     </section>
     <section>
       <h2>
-        CSS environmental variables
+        <dfn>Title bar area environmental variables</dfn>
       </h2>
       <aside class="issue">
         <p>
@@ -163,7 +165,7 @@
       </aside>
       <section>
         <h3>
-          Title bar area variables
+          <dfn>Title bar area env variables</dfn>
         </h3>
         <table dfn-type="value" dfn-for="env()">
           <tr>
@@ -171,19 +173,19 @@
             <th>Value
           <tr>
             <td><dfn>`titlebar-area-x`</dfn>
-            <td><<length>>
+            <td><a href="https://drafts.csswg.org/css-values-3/#length-value"> length</a>
           <tr>
             <td><dfn>`titlebar-area-y`</dfn>
-            <td><length>>
+            <td><a href="https://drafts.csswg.org/css-values-3/#length-value"> length</a>
           <tr>
             <td><dfn>`titlebar-area-width`</dfn>
-            <td><<length>>
+            <td><a href="https://drafts.csswg.org/css-values-3/#length-value"> length</a>
           <tr>
             <td><dfn>`titlebar-area-height`</dfn>
-            <td><<length>>
+            <td><a href="https://drafts.csswg.org/css-values-3/#length-value"> length</a>
         </table>
         <p>
-          The title bar area variables are four [=environmental variables=]
+          The [=title bar area environmental variables=] are four env variables
           that define a rectangle by the width and height from a starting point
           in the viewport. This area corresponds to the available area of the
           title bar, and allows to position dynamic Web content inside its
