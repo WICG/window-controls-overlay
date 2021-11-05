@@ -16,7 +16,13 @@
                     company: "Microsoft",
                     companyURL: "https://www.microsoft.com"}],
         github: "WICG/window-controls-overlay",
-        xref: ["web-platform", "appmanifest"],
+        xref: ["web-platform"
+          , "infra"
+          , "WebIDL"
+          , "DOM"
+          , "HTML"
+          , "geometry-1"
+          , "appmanifest"],
         group: "wicg",
 
       };
@@ -45,12 +51,12 @@
       </h2>
       <p>
         Applications targeting non-mobile devices are hosted within frames that commonly have a title bar. A title bar is a UI element generally represented as a horizontal bar at the top of a window, bearing the name of the active program or the name of the current active document and and the [=window controls=]. The <dfn data-lt="controls of the window">window controls</dfn> are the interface elements that the operating system uses consistently across applications to enable the user to perform certain actions to control the application. Common actions in the [=window controls=] include minimize, maximize/restore, and close buttons.</p>
-      <p> For installed web apps hosted within a user agent (UA) frame, it is possible to declare which type of frame to use via the browser display mode. Developers can select the mode that best meets the needs of the application via the [=manifest=] file's `display` member. Developers targeting non-mobile devices looking to create an immersive, native-like title bar for their installed application may want to utilize the title bar area, but this is not supported via the aforementioned `display` member. Instead, the client area begins immediately below the reserved title bar area, which can create a cramped application space specially on portable devices with smaller screens.
+      <p> For installed web apps hosted within a user agent (UA) frame, it is possible to declare which type of frame to use via the browser display mode. Developers can select the mode that best meets the needs of the application via the [=manifest=] file's `display` member. Developers targeting non-mobile devices looking to create an immersive, native-like title bar for their installed application may want to utilize the title bar area, but this is not supported via the aforementioned `display` member. Instead, the client area begins immediately below the reserved title bar region, which can create a cramped application space specially on portable devices with smaller screens.
       </p>
       <p>
         <dfn>Window Controls Overlay</dfn> is a feature for installed web applications running on non-mobile environments that addresses this challenge by introducing a set
         of technologies throughout JS and CSS that allow to the web content
-        area to expand over the title bar area, remaining only the area
+        area to expand over the [=title bar area=]. When WCO is enabled, the <dfn>title bar area</dfn> is the the region of the window frame occupied by the title bar without the area
         corresponding to the <dfn data-lt="overlaid">overlay</dfn> that houses the [=controls of the window=].
       </p>
     </section>
@@ -72,16 +78,49 @@
         <h3>
           `windowControlsOverlay` attribute
         </h3>
-      </section>
-      <p>
-        The {{navigator.windowControlsOverlay}} attribute is an instance of
-        {{WindowControlsOverlay}}. This attribute provides the current
-        visibility of the overlay, the bounding rectangular area of the
-        overlay, and whether there was an `ongeometrychange` event to that area
-        of the overlay. The <a>user agent</a> MUST run the <a>update the
-        overlay area information</a> algorithm steps to initialize the values
-        and return the {{Navigator.windowControlsOverlay}} attribute.
-      </p>
+        <p>
+          The {{navigator.windowControlsOverlay}} attribute is an instance of
+          {{WindowControlsOverlay}}. This attribute provides the current
+          visibility of the overlay, the bounding rectangular area of the
+          overlay, and whether there was an `ongeometrychange` event to that area
+          of the overlay. The <a>user agent</a> MUST run the <a>update the
+          overlay area information</a> algorithm steps to initialize the values
+          and return the {{Navigator.windowControlsOverlay}} attribute.
+        </p>
+        </section>
+        <section>
+          <h3>
+            Internal slots
+          </h3>
+          <table class="simple">
+            <thead>
+              <tr>
+                <th>
+                  Internal slot
+                </th>
+                <th>
+                  Initial value
+                </th>
+                <th>
+                  Description
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <dfn>[[\TitleBarArea]]</dfn>
+                </td>
+                <td>
+                  An object with empty values for the variables that define the title bar area.
+                </td>
+                <td>
+                  An <a>object</a> that stores the values of the environmental variables that define the title bar area.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
     </section>
     <section data-dfn-for='WindowControlsOverlay' data-link-for=
     'WindowControlsOverlay'>
@@ -211,14 +250,18 @@
           Update the overlay area information
         </h3>
         <p>
-          The steps to <dfn>update the overlay information</dfn> of a
-          {{Document}} are as follows:
+          To <dfn>update the overlay area information</dfn>, run these steps:
         </p>
         <ol class="algorithm">
-          <li>When the available title bar area resizes, the user agent updates
-          the environmental variables to reflect the new available space in the
-          titlebar.
+          <li>
+            If {{navigator}}.[[\TitleBarArea]] is undefined, abort these steps.
           </li>
+          <li>
+            Let |ovls| be a [=list=] of regions defined by the [=overlays=] that house the [=window controls=] on the the window frame.
+          </li>
+          <li>Let |tba| be a  {{DOMRect}} object that encompasses the area left between the intersection of the regions in |ovls| and the [=document=]'s <a href="https://drafts.csswg.org/css2/#viewport">viewport</a>.</li>
+          <li>Make {{navigator}}.[[\TitleBarArea]] equal to |tba|.</li>
+          <li>Update the [=title bar area env variables=] with information from {{navigator}}.[[\TitleBarArea]].</li>
         </ol>
       </section>
     </section>
