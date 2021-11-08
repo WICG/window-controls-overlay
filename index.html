@@ -88,6 +88,9 @@
           and return the {{Navigator.windowControlsOverlay}} attribute.
         </p>
         </section>
+      </section>
+        <section>
+          <h2>Extensions to the `Window` interface</h2>
         <section>
           <h3>
             Internal slots
@@ -112,15 +115,16 @@
                   <dfn>[[\TitleBarArea]]</dfn>
                 </td>
                 <td>
-                  An object with empty values for the variables that define the title bar area.
+                  An object with empty values that define the title bar area.
                 </td>
                 <td>
-                  An <a>object</a> that stores the values of the environmental variables that define the title bar area.
+                  An <a>object</a> that stores the values of the environmental variables and JS APIs that define the title bar area.
                 </td>
               </tr>
             </tbody>
           </table>
-        </section>
+        
+      </section>
     </section>
     <section data-dfn-for='WindowControlsOverlay' data-link-for=
     'WindowControlsOverlay'>
@@ -254,13 +258,15 @@
         </p>
         <ol class="algorithm">
           <li>
-            If {{navigator}}.[[\TitleBarArea]] is undefined, abort these steps.
-          </li>
-          <li>
             Let |ovls| be a [=list=] of regions defined by the [=overlays=] that house the [=window controls=] on the the window frame.
           </li>
-          <li>Let |tba| be a  {{DOMRect}} object that encompasses the area left between the intersection of the regions in |ovls| and the [=document=]'s <a href="https://drafts.csswg.org/css2/#viewport">viewport</a>.</li>
-          <li>Make {{navigator}}.[[\TitleBarArea]] equal to |tba|.</li>
+          <ol>
+            <li>If there is only one overlay region in |ovls|, let |tba| be a {{DOMRect}} object that encompasses the area from the edge of the frame to the start of the |ovls|.</li>
+            <li>If there is more than one overlay region in |ovls|, let |tba| be a  {{DOMRect}} object that encompasses the area left between the intersection of the regions in |ovls| and the [=document=]'s <a href="https://drafts.csswg.org/css2/#viewport">viewport</a>.</li>
+            <li>The resulting area's height is the same as the height of the regions in |ovls|.</li>
+          </ol>
+        <li>Scale |tba| to the match the set scaling of the [=document=]'s <a href="https://drafts.csswg.org/css2/#viewport">viewport</a>.</li>
+        <li>Make {{window}}.[[\TitleBarArea]] equal to |tba|.</li>
           <li>Update the [=title bar area env variables=] with information from {{navigator}}.[[\TitleBarArea]].</li>
         </ol>
       </section>
