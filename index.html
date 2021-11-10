@@ -16,12 +16,8 @@
                     company: "Microsoft",
                     companyURL: "https://www.microsoft.com"}],
         github: "WICG/window-controls-overlay",
-        xref: ["web-platform"
-          , "infra"
-          , "WebIDL"
-          , "DOM"
-          , "geometry-1"
-          , "appmanifest"],
+        xref: { profile: "web-platform",
+                specs: ["geometry-1", "appmanifest"] },
         group: "wicg",
 
       };
@@ -173,7 +169,7 @@
           <tbody>
             <tr>
               <td>
-                <dfn>[[\TitleBarArea]]</dfn>
+                <dfn data-dfn-for="Window">[[\TitleBarArea]]</dfn>
               </td>
               <td>
                 Empty [=struct=] for the title bar region.
@@ -207,6 +203,11 @@
           [SameObject] readonly attribute DOMRect boundingRect;
           readonly attribute boolean visible;
         };
+
+        dictionary WindowControlsOverlayGeometryChangeEventInit : EventInit {
+          required DOMRect boundingRect;
+          boolean visible = false;
+        };
       </pre>
       <section>
         <h3>
@@ -214,7 +215,7 @@
         </h3>
         <p>
           The `visible` attribute is a [=boolean=] that returns `true` when the
-          values of the {{window}}.[[\TitleBarArea]] are not 0.
+          values of the {{Window/window}}.[[\TitleBarArea]] are not 0.
         </p>
       </section>
       <section>
@@ -391,10 +392,10 @@
               </li>
             </ol>
           </li>
-          <li>Make {{window}}.[[\TitleBarArea]] equal to |tba|.
+          <li>Make {{Window/window}}.[[\TitleBarArea]] equal to |tba|.
           </li>
           <li>Update the [=title bar area env variables=] with information from
-          {{window}}.[[\TitleBarArea]].
+          {{Window/window}}.[[\TitleBarArea]].
           </li>
         </ol>
       </section>
