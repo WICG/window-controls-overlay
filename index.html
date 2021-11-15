@@ -16,13 +16,8 @@
                     company: "Microsoft",
                     companyURL: "https://www.microsoft.com"}],
         github: "WICG/window-controls-overlay",
-        xref: ["web-platform"
-          , "infra"
-          , "WebIDL"
-          , "DOM"
-          , "HTML"
-          , "geometry-1"
-          , "appmanifest"],
+        xref: { profile: "web-platform",
+                specs: ["geometry-1", "appmanifest"] },
         group: "wicg",
 
       };
@@ -50,15 +45,89 @@
         Introduction
       </h2>
       <p>
-        Applications targeting non-mobile devices are hosted within frames that commonly have a title bar. A title bar is a UI element generally represented as a horizontal bar at the top of a window, bearing the name of the active program or the name of the current active document and and the [=window controls=]. The <dfn data-lt="controls of the window">window controls</dfn> are the interface elements that the operating system uses consistently across applications to enable the user to perform certain actions to control the application. Common actions in the [=window controls=] include minimize, maximize/restore, and close buttons.</p>
-      <p> For installed web apps hosted within a user agent (UA) frame, it is possible to declare which type of frame to use via the browser display mode. Developers can select the mode that best meets the needs of the application via the [=manifest=] file's `display` member. Developers targeting non-mobile devices looking to create an immersive, native-like title bar for their installed application may want to utilize the title bar area, but this is not supported via the aforementioned `display` member. Instead, the client area begins immediately below the reserved title bar region, which can create a cramped application space specially on portable devices with smaller screens.
+        Applications targeting non-mobile devices are hosted within frames that
+        commonly have a title bar. A title bar is a UI element generally
+        represented as a horizontal bar at the top of a window, bearing the
+        name of the active program or the name of the current active document
+        and and the [=window controls=]. Modern applications can take advantage
+        of the area in the title bar in order to display UI content to create a
+        better UX.
       </p>
       <p>
-        <dfn>Window Controls Overlay</dfn> is a feature for installed web applications running on non-mobile environments that addresses this challenge by introducing a set
-        of technologies throughout JS and CSS that allow to the web content
-        area to expand over the [=title bar area=]. When WCO is enabled, the <dfn>title bar area</dfn> is the the region of the window frame occupied by the title bar without the area
-        corresponding to the <dfn data-lt="overlaid">overlay</dfn> that houses the [=controls of the window=].
+        For installed web apps hosted within a user agent (UA) frame, it is
+        possible to get some form of customization in the frame by declaring
+        which type of display mode is preferred. Developers can select the mode
+        that best meets the needs of the application via the [=manifest=]
+        file's `display` member. However, these modes are limited and do not
+        provide the same level of control over the title bar, therefore
+        developers looking to create an immersive, native-like title bar for
+        their installed application can't achieve this with the aforementioned
+        member. Instead, the client area begins immediately below the reserved
+        title bar region, which can create a cramped application space
+        specially on portable devices with smaller screens.
       </p>
+      <p>
+        WCO enables the creation of custom title bar UI by leaving only the
+        [=window controls=] [=overlaid=] on the frame, in which case web
+        content can flow into the area previously held by the title bar.
+      </p><img src="spec-wco.png" alt=
+      "Blank window frame showing the controls area.">
+      <section>
+        <h3>
+          Examples
+        </h3>
+        <aside class="example">
+          <p>
+            Positioning a div on the title bar area
+          </p>
+          <pre class="css">
+            .titleBar {
+              position: fixed;
+              left: env(titlebar-area-x, 0);
+              top: env(titlebar-area-y, 0);
+              width: env(titlebar-area-width, 100%);
+              height: env(titlebar-area-height, 40px);
+              app-region: drag;
+          }
+          </pre>
+          <pre>
+            &lt;div class="titlebar"&gt;
+              This is web content in the title bar region!
+            &lt;div&gt;
+          </pre>
+        </aside>
+      </section>
+    </section>
+    <section>
+      <h2>
+        Concepts
+      </h2>
+      <ul>
+        <li>
+          <dfn>Window Controls Overlay</dfn>: feature for installed web
+          applications running on non-mobile environments that allows the
+          viewport to expand over the [=title bar area=] using JS and CSS.
+        </li>
+        <li>
+          <dfn>Title bar area</dfn>: When WCO is enabled, this is the the
+          region of the window frame occupied by the title bar without the area
+          corresponding to the [=overlay=] that houses the [=controls of the
+          window=].
+        </li>
+        <li>
+          <dfn data-lt="controls of the window">Window controls</dfn>:
+          interface elements that the operating system uses consistently across
+          applications to enable the user to perform certain actions to control
+          the application. Common actions in the [=window controls=] include
+          minimize, maximize/restore, and close buttons.
+        </li>
+        <li>
+          <dfn data-lt="overlaid">Overlay</dfn> of [=window controls=]: Area
+          that houses the [=controls of the window=] and is overlaid on top of
+          the viewport.
+        </li><img src="spec-wco-areas.png" alt=
+        "Window frame with window controls circled.">
+      </ul>
     </section>
     <section>
       <h2>
@@ -74,53 +143,46 @@
           [SameObject] readonly attribute WindowControlsOverlay windowControlsOverlay;
         };
       </pre>
+    </section>
+    <section>
+      <h2>
+        Extensions to the `Window` interface
+      </h2>
       <section>
         <h3>
-          `windowControlsOverlay` attribute
+          Internal slots
         </h3>
-        <p>
-          The {{navigator.windowControlsOverlay}} attribute is an instance of
-          {{WindowControlsOverlay}}. This attribute provides the current
-          visibility of the overlay, the bounding rectangular area of the
-          overlay, and whether there was an `ongeometrychange` event to that area
-          of the overlay. The <a>user agent</a> MUST run the <a>update the
-          overlay area information</a> algorithm steps to initialize the values
-          and return the {{Navigator.windowControlsOverlay}} attribute.
-        </p>
-        </section>
-        <section>
-          <h3>
-            Internal slots
-          </h3>
-          <table class="simple">
-            <thead>
-              <tr>
-                <th>
-                  Internal slot
-                </th>
-                <th>
-                  Initial value
-                </th>
-                <th>
-                  Description
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <dfn>[[\TitleBarArea]]</dfn>
-                </td>
-                <td>
-                  An object with empty values for the variables that define the title bar area.
-                </td>
-                <td>
-                  An <a>object</a> that stores the values of the environmental variables that define the title bar area.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
+        <table class="simple">
+          <thead>
+            <tr>
+              <th>
+                Internal slot
+              </th>
+              <th>
+                Initial value
+              </th>
+              <th>
+                Description
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <dfn data-dfn-for="Window">[[\TitleBarArea]]</dfn>
+              </td>
+              <td>
+                Empty [=struct=] for the title bar region.
+              </td>
+              <td>
+                A [=struct=] that stores the values of the area that defines
+                the title bar region. These values are `x`, `y`, `width`,
+                `height`.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
     </section>
     <section data-dfn-for='WindowControlsOverlay' data-link-for=
     'WindowControlsOverlay'>
@@ -141,14 +203,19 @@
           [SameObject] readonly attribute DOMRect boundingRect;
           readonly attribute boolean visible;
         };
+
+        dictionary WindowControlsOverlayGeometryChangeEventInit : EventInit {
+          required DOMRect boundingRect;
+          boolean visible = false;
+        };
       </pre>
       <section>
         <h3>
           The <dfn>visible</dfn> attribute
         </h3>
         <p>
-          The `visible` attribute is a boolean that determines if the window
-          controls overlay has been rendered.
+          The `visible` attribute is a [=boolean=] that returns `true` when the
+          values of the {{Window/window}}.[[\TitleBarArea]] are not 0.
         </p>
       </section>
       <section>
@@ -157,14 +224,22 @@
         </h3>
         <p>
           The `getBoundingClientRect()` method returns a DOMRect that
-          represents the available area for displaying web content. This available title bar region does not include the area under the [=window controls=] [=overlay=]. Web content
-          SHOULD not be displayed beneath the overlay.
-          <aside class="note">
-            <p>
-              The client viewport does not make any special considerations when rendering content with the WCO feature enabled. The content will be displayed in the same way that it would be displayed inside the browser window. In order to avoid content being hidden by the area where the [=window controls=] are [=overlaid=], developers must use the `getBoundingClientRect` method or the [=title bar area env variables=].
-            </p>
-          </aside>
+          represents the available area for displaying web content. This
+          available title bar region does not include the area under the
+          [=window controls=] [=overlay=]. Web content SHOULD not be displayed
+          beneath the overlay.
         </p>
+        <aside class="note">
+          <p>
+            The client viewport does not make any special considerations when
+            rendering content with the WCO feature enabled. The content will be
+            displayed in the same way that it would be displayed inside the
+            browser window. In order to avoid content being hidden by the area
+            where the [=window controls=] are [=overlaid=], developers must use
+            the `getBoundingClientRect` method or the [=title bar area env
+            variables=].
+          </p>
+        </aside>
       </section>
       <section>
         <h3>
@@ -172,12 +247,13 @@
         </h3>
         <p>
           The `ongeometrychange` attribute is an event handler whose
-          corresponding event handler event type is "change". The event is dispatched when the available title bar region changes, e.g., in response to the UA displaying the scope's origin during the launch of the app, an extension or feature like file access or download displaying an icon as part of the [=window controls=] [=overlay=], or the window being resized.
+          corresponding event handler event type is "change". The event is
+          dispatched when the available title bar region changes, e.g., in
+          response to the UA displaying the scope's origin during the launch of
+          the app, an extension or feature like file access or download
+          displaying an icon as part of the [=window controls=] [=overlay=], or
+          the window being resized.
         </p>
-        <p>The event must follow these steps:</p>
-        <ol>
-          <li></li>
-        </ol>
       </section>
     </section>
     <section>
@@ -190,6 +266,13 @@
         `window-controls-overlay` value is specified in the `display-override`
         the user agent SHOULD extend the client area to the title bar.
       </p>
+      <aside class="issue">
+        <p>
+          TO DO: This is draft text for features that might belong in other
+          specifications. This document might not be the final venue for some
+          of the work specified in this draft. (manifest/manifest incubations)
+        </p>
+      </aside>
     </section>
     <section>
       <h2>
@@ -197,9 +280,9 @@
       </h2>
       <aside class="issue">
         <p>
-          This is draft text for features that might belong in other
+          TO DO: This is draft text for features that might belong in other
           specifications. This document might not be the final venue for some
-          of the work specified in this draft.
+          of the work specified in this draft. (CSS)
         </p>
       </aside>
       <section>
@@ -208,20 +291,49 @@
         </h3>
         <table dfn-type="value" dfn-for="env()">
           <tr>
-            <th>Name
-            <th>Value
+            <th>
+              Name
+            </th>
+            <th>
+              Value
+            </th>
+          </tr>
           <tr>
-            <td><dfn>`titlebar-area-x`</dfn>
-            <td><a href="https://drafts.csswg.org/css-values-3/#length-value"> length</a>
+            <td>
+              <dfn>`titlebar-area-x`</dfn>
+            </td>
+            <td>
+              <a href=
+              "https://drafts.csswg.org/css-values-3/#length-value">length</a>
+            </td>
+          </tr>
           <tr>
-            <td><dfn>`titlebar-area-y`</dfn>
-            <td><a href="https://drafts.csswg.org/css-values-3/#length-value"> length</a>
+            <td>
+              <dfn>`titlebar-area-y`</dfn>
+            </td>
+            <td>
+              <a href=
+              "https://drafts.csswg.org/css-values-3/#length-value">length</a>
+            </td>
+          </tr>
           <tr>
-            <td><dfn>`titlebar-area-width`</dfn>
-            <td><a href="https://drafts.csswg.org/css-values-3/#length-value"> length</a>
+            <td>
+              <dfn>`titlebar-area-width`</dfn>
+            </td>
+            <td>
+              <a href=
+              "https://drafts.csswg.org/css-values-3/#length-value">length</a>
+            </td>
+          </tr>
           <tr>
-            <td><dfn>`titlebar-area-height`</dfn>
-            <td><a href="https://drafts.csswg.org/css-values-3/#length-value"> length</a>
+            <td>
+              <dfn>`titlebar-area-height`</dfn>
+            </td>
+            <td>
+              <a href=
+              "https://drafts.csswg.org/css-values-3/#length-value">length</a>
+            </td>
+          </tr>
         </table>
         <p>
           The [=title bar area environmental variables=] are four env variables
@@ -240,6 +352,13 @@
         To define which regions or elements in the title bar are draggable,
         this specification defines the CSS `app-region` property.
       </p>
+      <aside class="issue">
+        <p>
+          TO DO: This is draft text for features that might belong in other
+          specifications. This document might not be the final venue for some
+          of the work specified in this draft. (CSS)
+        </p>
+      </aside>
     </section>
     <section>
       <h2>
@@ -253,17 +372,124 @@
           To <dfn>update the overlay area information</dfn>, run these steps:
         </p>
         <ol class="algorithm">
-          <li>
-            If {{navigator}}.[[\TitleBarArea]] is undefined, abort these steps.
+          <li>Let |ovls| be a [=list=] of regions defined by the [=overlays=]
+          that house the [=window controls=] on the the window frame.
           </li>
-          <li>
-            Let |ovls| be a [=list=] of regions defined by the [=overlays=] that house the [=window controls=] on the the window frame.
+          <li>Let |tba| be an empty {{DOMRect}} object representing the
+          available title bar area.
+            <ol>
+              <li>If there is only one overlay region in |ovls|, set |tba| as a
+              {{DOMRect}} that encompasses the area from the edge of the frame
+              to the innermost edge of the |ovls|.
+              </li>
+              <li>If there is more than one overlay region in |ovls|, set |tba|
+              to a {{DOMRect}} that encompasses the area between the
+              intersection of the regions in |ovls| and the [=document=]'s
+              <a href="https://drafts.csswg.org/css2/#viewport">viewport</a>.
+              </li>
+              <li>|tba|'s height should be the same as the height of the
+              regions in |ovls|.
+              </li>
+            </ol>
           </li>
-          <li>Let |tba| be a  {{DOMRect}} object that encompasses the area left between the intersection of the regions in |ovls| and the [=document=]'s <a href="https://drafts.csswg.org/css2/#viewport">viewport</a>.</li>
-          <li>Make {{navigator}}.[[\TitleBarArea]] equal to |tba|.</li>
-          <li>Update the [=title bar area env variables=] with information from {{navigator}}.[[\TitleBarArea]].</li>
+          <li>Make {{Window/window}}.[[\TitleBarArea]] equal to |tba|.
+          </li>
+          <li>Update the [=title bar area env variables=] with information from
+          {{Window/window}}.[[\TitleBarArea]].
+          </li>
         </ol>
       </section>
+    </section>
+    <section>
+      <h2>
+        Security and privacy considerations
+      </h2>
+      <section>
+        <h3>
+          Security
+        </h3>
+        <section>
+          <h4>
+            Spoofing risks
+          </h4>
+          <p>
+            Displaying installed web apps in a frameless window leaves room for
+            developers to spoof content in what was previously a trusted,
+            UA-controlled region.
+          </p>
+          <p>
+            Currently in Chromium browsers, `standalone` mode includes a title
+            bar which on initial launch displays the title of the webpage on
+            the left, and the origin of the page on the right (followed by the
+            "settings and more" button and the window controls). After a few
+            seconds, the origin text disappears.
+          </p>
+          <p>
+            In RTL configured browsers, this layout is flipped such that the
+            origin text is on the left. This open the window controls overlay
+            to spoofing the origin if there is insufficient padding between the
+            origin and the right edge of the overlay. For example, the origin
+            "evil.ltd" could be appended with a trusted site "google.com",
+            leading users to believe that the source is trustworthy.
+          </p>
+        </section>
+        <section>
+          <h4>
+            Out-of-scope Navigation
+          </h4>
+          <p>
+            Another existing security feature for installed web apps is an
+            indicator of when a user has left the declared scope of the app.
+            When a user navigates out of scope, a black bar appears between the
+            title bar and the web content, and it includes the following
+            information:
+          </p>
+          <ul>
+            <li>A close button to allow users to easily navigate back into
+            scope
+            </li>
+            <li>A security icon which opens the security info popup when
+            clicked
+            </li>
+            <li>The origin and title of the site
+            </li>
+          </ul>
+          <p>
+            With the window controls overlay enabled, if a user navigates
+            out-of-scope the overlay will be temporarily replaced with a
+            standalone title bar. When the user navigates back to into scope,
+            the standalone title bar will be hidden again and the overlay
+            displayed.
+          </p>
+        </section>
+      </section>
+      <section>
+        <h3>
+          Privacy
+        </h3>
+        <p>
+          Enabling Window Controls Overlay poses an increased fingerprinting
+          surface since the size of the overlay can vary depending on the OS,
+          the text scale, the OS font size, the OS zoom factor, and the web
+          content’s zoom factor.
+        </p>
+        <p>
+          Although this is a potential fingerprinting issue, it only applies to
+          installed desktop web apps that use the window controls overlay
+          feature and does not apply to general browser usage. Additionally,
+          the windowControlsOverlay API will not be available to iframes
+          embedded inside of an installed web app.
+        </p>
+      </section>
+    </section>
+    <section class="appendix informative" id="acknowledgments">
+      <h2>
+        Acknowledgments
+      </h2>
+      <p>
+        Huge thanks to Amanda Baker and Joshua Bell for their contributions to
+        this work.
+      </p>
     </section>
     <section id="conformance"></section>
   </body>
