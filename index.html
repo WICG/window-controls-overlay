@@ -228,8 +228,8 @@
           available title bar region does not include the area under the
           [=window controls=] [=overlay=]. Web content should not be displayed
           beneath the overlay.
-        </p>
-        <img src="spec-wco-gbr.png" alt="depiction of the area returned by the getBoundingClientRect method"> 
+        </p><img src="spec-wco-gbr.png" alt=
+        "depiction of the area returned by the getBoundingClientRect method">
         <aside class="note">
           <p>
             The client viewport does not make any special considerations when
@@ -366,10 +366,21 @@
         Algorithms
       </h2>
       <section>
-        <h3>Resize the title bar area</h3>
-        <p>To <dfn data-lt="title bar region resizes">resize the title bar area</dfn> for a window |win|, run these steps:</p>
+        <h3>
+          Resize the title bar area
+        </h3>
+        <p>
+          To <dfn data-lt="title bar region resizes">resize the title bar
+          area</dfn> for a window |win|, run these steps:
+        </p>
         <ol>
-          <li>If |win|'s [=overlay=] has had its width or height changed (e.g. as a result of the user resizing the browser window, or changing the page zoom factor, or extensions/other UI appearing or disappearing on the [=overlay=]), since the last time these steps were run, [=fire an event=] named `ongeometrychange` at the {{Window/window}} object and [=update the overlay area information=].</li>
+          <li>If |win|'s [=overlay=] has had its width or height changed (e.g.
+          as a result of the user resizing the browser window, or changing the
+          page zoom factor, or extensions/other UI appearing or disappearing on
+          the [=overlay=]), since the last time these steps were run, [=fire an
+          event=] named `ongeometrychange` at the {{Window/window}} object and
+          [=update the overlay area information=].
+          </li>
         </ol>
       </section>
       <section>
@@ -495,8 +506,8 @@
         Acknowledgments
       </h2>
       <p>
-        Huge thanks to Amanda Baker, Joshua Bell and Yoav Weiss for their contributions to
-        this work.
+        Huge thanks to Amanda Baker, Joshua Bell and Yoav Weiss for their
+        contributions to this work.
       </p>
     </section>
     <section id="conformance"></section>
