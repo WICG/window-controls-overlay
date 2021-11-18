@@ -226,8 +226,7 @@
           The `getBoundingClientRect()` method returns a DOMRect that
           represents the available area for displaying web content. This
           available title bar region does not include the area under the
-          [=window controls=] [=overlay=]. Web content should not be displayed
-          beneath the overlay.
+          [=window controls=] [=overlay=].
         </p><img src="spec-wco-gbr.png" alt=
         "depiction of the area returned by the getBoundingClientRect method">
         <aside class="note">
@@ -248,12 +247,7 @@
         </h3>
         <p>
           The `ongeometrychange` attribute is an event handler whose
-          corresponding event handler event type is "change". The event is
-          dispatched when the [=title bar region resizes=], e.g., in
-          response to the UA displaying the scope's origin during the launch of
-          the app, an extension or feature like file access or download
-          displaying an icon as part of the [=window controls=] [=overlay=], or
-          a window [=Window/resize=].
+          corresponding event handler event type is "change".
         </p>
       </section>
     </section>
@@ -363,6 +357,21 @@
     </section>
     <section>
       <h2>
+        Integration with CSSOM
+      </h2>
+      <p>
+        This specification integrates with the [[cssom-view]] specification by
+        patching the <a href=
+        "https://www.w3.org/TR/cssom-view-1/#run-the-resize-steps">algorithm
+        below</a>:
+      </p>
+      <p>
+        In the viewport [=Window/resize=] algorithm, run [=resize the title bar
+        area=] after step 1.
+      </p>
+    </section>
+    <section>
+      <h2>
         Algorithms
       </h2>
       <section>
@@ -376,8 +385,8 @@
         <ol>
           <li>If |win|'s [=overlay=] has had its width or height changed (e.g.
           as a result of the user resizing the browser window, or changing the
-          page zoom factor, or other UI appearing or disappearing on
-          the [=overlay=]), since the last time these steps were run, [=fire an
+          page zoom factor, or other UI appearing or disappearing on the
+          [=overlay=]), since the last time these steps were run, [=fire an
           event=] named `ongeometrychange` at the {{Window/window}} object and
           [=update the overlay area information=].
           </li>
