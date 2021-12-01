@@ -133,12 +133,12 @@ The bounding rectangle and the visibility of the window controls overlay will ne
 To provide the visibility and bounding rectangle of the overlay, this explainer proposes a new object on the `window.navigator` property called `windowControlsOverlay`.
 
 `windowControlsOverlay` would make available the following objects:
-* `getBoundingClientRect()` which would return a [`DOMRect`](https://developer.mozilla.org/en-US/docs/Web/API/DOMRect) that represents the area under the window controls overlay. Interactive web content should not be displayed beneath the overlay.
+* `getBoundingClientRect()` which would return a [`DOMRect`](https://developer.mozilla.org/en-US/docs/Web/API/DOMRect) that represents the area in the title bar region that is not under the window controls overlay. Interactive web content should can displayed in this area.
 * `visible` a boolean to determine if the window controls overlay has been rendered
 
 For privacy, the `windowControlsOverlay` will not be accessible to iframes inside of a webpage. See [Privacy Considerations](#privacy-considerations) below
 
-Whenever the overlay is resized, a `geometrychange` event will be fired on the `navigator.windowControlsOverlay` object to notify the client that it should recalculate the layout based on the new bounding rect of the overlay. 
+Whenever the overlay is resized, a `geometrychange` event will be fired on the `navigator.windowControlsOverlay` object to notify the client that it should recalculate the layout based on the new bounding rect of the overlay.
 
 #### CSS Environment Variables
 Although it's possible to layout the content of the title bar and web page with just the JavaScript APIs provided above, they are not as responsive as a CSS solution. This is problematic either when the overlay resizes to accommodate the origin text or a new extension icon populates the overlay, or when the window resizes.
@@ -302,10 +302,18 @@ body {
   overflow-y: scroll;
 }
 ```
+## Considered Alternatives
 
+### `getTitleBarAreaRect` method
+The `windowControlsOverlay` object has a `getBoundingClientRect` method that returns the area of the title bar where is it safe to put content. We consider naming the `windowControlsOverlay.getBoundingClientRect` method to `getTitleBarAreaRect` to remove any ambiguity of the area returned by the method. 
+
+```javascript
+//prints to console the dimensions of the title bar area
+let titleBarArea = navigator.windowControlsOverlay.getTitleBarAreaRect();
+console.log(`The current region to define a custom title bar is {$titleBarArea.width}x{$titleBarArea.length} pixels`);
+```
 
 ## Security Considerations
-
 
 ### Spoofing risks
 Displaying installed web apps in a frameless window leaves room for developers to spoof content in what was previously a trusted, UA-controlled region. 
