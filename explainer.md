@@ -20,7 +20,12 @@ This document is intended as a starting point for engaging the community and sta
      - [JavaScript APIs](#javascript-apis)
      - [CSS Environment Variables](#css-environment-variables) 
    - [Defining Draggable Regions in Web Content](#defining-draggable-regions-in-web-content)
+   - [Resulting Changes in Browser](#resulting-changes-in-browser)
+     - [Coordinate System](#coordinate-system)
+     - [Omnibox-anchored Dialogs](#omnibox-anchored-dialogs)
  - [Example](#example)
+ - [Considered Alternatives](#considered-alternatives)
+   - [Treating the Overlay as a Notch](#treating-the-overlay-as-a-notch)
  - [Security Considerations](#security-considerations)
    - [Spoofing risks](#spoofing-risks)
    - [Out-of-scope Navigation](#out-of-scope-navigation)
@@ -304,7 +309,7 @@ body {
 ```
 ## Considered Alternatives
 
-### Treating the overlay as a notch
+### Treating the Overlay as a Notch
 
 Following the pattern of safe-area-inset-*s, we propose new CSS environment variables to define the insets of the unsafe notch area in more detail: 
 
