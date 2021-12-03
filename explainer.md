@@ -304,8 +304,25 @@ body {
 ```
 ## Considered Alternatives
 
-### `getTitleBarAreaRect` method
-The `windowControlsOverlay` object has a `getBoundingClientRect` method that returns the area of the title bar where is it safe to put content. We consider naming the `windowControlsOverlay.getBoundingClientRect` method to `getTitleBarAreaRect` to remove any ambiguity of the area returned by the method. 
+### Treating the overlay as a notch
+
+Following the pattern of safe-area-inset-*s, we propose new CSS environment variables to define the insets of the unsafe notch area in more detail: 
+
+* Horizontal insets of the notch on the top edge of the screen
+  - unsafe-area-top-inset-left
+  - unsafe-area-top-inset-right
+* Horizontal insets of the notch on the bottom edge of the screen
+  - unsafe-area-bottom-inset-left
+  - unsafe-area-bottom-inset-right
+* Vertical insets of the notch on the left edge of the screen
+  - unsafe-area-left-inset-top
+  - unsafe-area-left-inset-bottom
+* Vertical insets of the notch on the right edge of the screen
+  - unsafe-area-right-inset-top
+  - unsafe-area-right-inset-bottom
+
+This alternative was not feasible in macOS since the overlay is separated in 2 regions in this OS (like having 2 notches). The resulting API was more complex and CSS cumbersome with this approach. See [this issue](https://github.com/w3c/csswg-drafts/issues/4721). 
+
 
 ```javascript
 //prints to console the dimensions of the title bar area
