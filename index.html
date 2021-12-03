@@ -97,6 +97,14 @@
           </pre>
         </aside>
       </section>
+      <aside class="note">
+        <p>
+          The WCO feature is useful in environments that use the paradigm of a
+          window to house applications. Notches, irregular shaped viewports or
+          layout of content around hardware constraints is outside of the scope
+          of the spec.
+        </p>
+      </aside>
     </section>
     <section>
       <h2>
@@ -193,7 +201,7 @@
         [Exposed=Window]
         interface WindowControlsOverlay : EventTarget {
           readonly attribute boolean visible;
-          DOMRect getBoundingClientRect();
+          DOMRect getTitlebarAreaRect();
           attribute EventHandler ongeometrychange;
         };
 
@@ -220,15 +228,15 @@
       </section>
       <section>
         <h3>
-          The <dfn>getBoundingClientRect</dfn> method
+          The <dfn>getTitlebarAreaRect</dfn> method
         </h3>
         <p>
-          The `getBoundingClientRect()` method returns a DOMRect that
-          represents the available area for displaying web content. This
-          available title bar region does not include the area under the
-          [=window controls=] [=overlay=].
+          The `getTitlebarAreaRect()` method returns a DOMRect that represents
+          the available area for displaying web content. This available title
+          bar region does not include the area under the [=window controls=]
+          [=overlay=].
         </p><img src="spec-wco-gbr.png" alt=
-        "depiction of the area returned by the getBoundingClientRect method">
+        "depiction of the area returned by the getTitlebarAreaRect method">
         <aside class="note">
           <p>
             The client viewport does not make any special considerations when
@@ -236,7 +244,7 @@
             displayed in the same way that it would be displayed inside the
             browser window. In order to avoid content being hidden by the area
             where the [=window controls=] are [=overlaid=], developers need to
-            use the `getBoundingClientRect` method or the [=title bar area env
+            use the `getTitlebarAreaRect` method or the [=title bar area env
             variables=].
           </p>
         </aside>
