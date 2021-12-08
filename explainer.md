@@ -138,7 +138,7 @@ The bounding rectangle and the visibility of the window controls overlay will ne
 To provide the visibility and bounding rectangle of the overlay, this explainer proposes a new object on the `window.navigator` property called `windowControlsOverlay`.
 
 `windowControlsOverlay` would make available the following objects:
-* `getBoundingClientRect()` which would return a [`DOMRect`](https://developer.mozilla.org/en-US/docs/Web/API/DOMRect) that represents the area in the title bar region that is not under the window controls overlay. Interactive web content can be displayed in this area.
+* `getTitlebarAreaRect()` which would return a [`DOMRect`](https://developer.mozilla.org/en-US/docs/Web/API/DOMRect) that represents the area in the title bar region that is not under the window controls overlay. Interactive web content can be displayed in this area.
 * `visible` a boolean to determine if the window controls overlay has been rendered
 
 For privacy, the `windowControlsOverlay` will not be accessible to iframes inside of a webpage. See [Privacy Considerations](#privacy-considerations) below
