@@ -20,7 +20,12 @@ This document is intended as a starting point for engaging the community and sta
      - [JavaScript APIs](#javascript-apis)
      - [CSS Environment Variables](#css-environment-variables) 
    - [Defining Draggable Regions in Web Content](#defining-draggable-regions-in-web-content)
+   - [Resulting Changes in Browser](#resulting-changes-in-browser)
+     - [Coordinate System](#coordinate-system)
+     - [Omnibox-anchored Dialogs](#omnibox-anchored-dialogs)
  - [Example](#example)
+ - [Considered Alternatives](#considered-alternatives)
+   - [Treating the Overlay as a Notch](#treating-the-overlay-as-a-notch)
  - [Security Considerations](#security-considerations)
    - [Spoofing risks](#spoofing-risks)
    - [Out-of-scope Navigation](#out-of-scope-navigation)
@@ -133,12 +138,12 @@ The bounding rectangle and the visibility of the window controls overlay will ne
 To provide the visibility and bounding rectangle of the overlay, this explainer proposes a new object on the `window.navigator` property called `windowControlsOverlay`.
 
 `windowControlsOverlay` would make available the following objects:
-* `getBoundingClientRect()` which would return a [`DOMRect`](https://developer.mozilla.org/en-US/docs/Web/API/DOMRect) that represents the area under the window controls overlay. Interactive web content should not be displayed beneath the overlay.
+* `getTitlebarAreaRect()` which would return a [`DOMRect`](https://developer.mozilla.org/en-US/docs/Web/API/DOMRect) that represents the area in the title bar region that is not under the window controls overlay. Interactive web content can be displayed in this area.
 * `visible` a boolean to determine if the window controls overlay has been rendered
 
 For privacy, the `windowControlsOverlay` will not be accessible to iframes inside of a webpage. See [Privacy Considerations](#privacy-considerations) below
 
-Whenever the overlay is resized, a `geometrychange` event will be fired on the `navigator.windowControlsOverlay` object to notify the client that it should recalculate the layout based on the new bounding rect of the overlay. 
+Whenever the overlay is resized, a `geometrychange` event will be fired on the `navigator.windowControlsOverlay` object to notify the client that it should recalculate the layout based on the new bounding rect of the overlay.
 
 #### CSS Environment Variables
 Although it's possible to layout the content of the title bar and web page with just the JavaScript APIs provided above, they are not as responsive as a CSS solution. This is problematic either when the overlay resizes to accommodate the origin text or a new extension icon populates the overlay, or when the window resizes.
@@ -302,10 +307,35 @@ body {
   overflow-y: scroll;
 }
 ```
+## Considered Alternatives
 
+### Treating the Overlay as a Notch
+
+Following the pattern of safe-area-inset-*s, we propose new CSS environment variables to define the insets of the unsafe notch area in more detail: 
+
+* Horizontal insets of the notch on the top edge of the screen
+  - unsafe-area-top-inset-left
+  - unsafe-area-top-inset-right
+* Horizontal insets of the notch on the bottom edge of the screen
+  - unsafe-area-bottom-inset-left
+  - unsafe-area-bottom-inset-right
+* Vertical insets of the notch on the left edge of the screen
+  - unsafe-area-left-inset-top
+  - unsafe-area-left-inset-bottom
+* Vertical insets of the notch on the right edge of the screen
+  - unsafe-area-right-inset-top
+  - unsafe-area-right-inset-bottom
+
+This alternative was not feasible in macOS since the overlay is separated in 2 regions in this OS (like having 2 notches). The resulting API was more complex and CSS cumbersome with this approach. See [this issue](https://github.com/w3c/csswg-drafts/issues/4721). 
+
+
+```javascript
+//prints to console the dimensions of the title bar area
+let titleBarArea = navigator.windowControlsOverlay.getTitleBarAreaRect();
+console.log(`The current region to define a custom title bar is {$titleBarArea.width}x{$titleBarArea.length} pixels`);
+```
 
 ## Security Considerations
-
 
 ### Spoofing risks
 Displaying installed web apps in a frameless window leaves room for developers to spoof content in what was previously a trusted, UA-controlled region. 

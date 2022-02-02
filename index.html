@@ -17,7 +17,7 @@
                     companyURL: "https://www.microsoft.com"}],
         github: "WICG/window-controls-overlay",
         xref: { profile: "web-platform",
-                specs: ["geometry-1", "appmanifest"] },
+                specs: ["geometry-1", "appmanifest", "cssom-view"] },
         group: "wicg",
 
       };
@@ -97,6 +97,37 @@
           </pre>
         </aside>
       </section>
+      <aside class="note">
+        <p>
+          The WCO feature is useful in environments that use the paradigm of a
+          window to house applications. Notches, irregular shaped viewports or
+          layout of content around hardware constraints is outside of the scope
+          of the spec.
+        </p>
+        <p>
+          The window paradigm for desktop-like environments is UX that has
+          proven effective at managing information architecture over decades.
+          It is a paradigm that continues to evolve, and part of this evolution
+          is allowing modern apps to take control of the area of the window
+          that was before reserved for the title bar. WCO enables this in the
+          same way that apps created with native technologies can take
+          advantage of today.
+        </p>
+        <p>
+          <strong>Notches and other hardware elements do not interfere with the
+          title bar region of any app window on any platform</strong>. They can
+          intersect parts of the OS such as the status or menu area, and this
+          is handled entirely by the host OS. The WCO feature does not deal
+          with any area that can be intersected by a notch.
+        </p>
+        <p>
+          Notches do not leave considerable space to work with, can be in
+          arbitrary positions, and not necessarily be rectangular.
+          Additionally, most GUI guidelines from vendors that implement notches
+          to maximize screen-body ratio on their devices recommend not to
+          position content around the notch.
+        </p>
+      </aside>
     </section>
     <section>
       <h2>
@@ -193,19 +224,19 @@
         [Exposed=Window]
         interface WindowControlsOverlay : EventTarget {
           readonly attribute boolean visible;
-          DOMRect getBoundingClientRect();
+          DOMRect getTitlebarAreaRect();
           attribute EventHandler ongeometrychange;
         };
 
         [Exposed=Window]
         interface WindowControlsOverlayGeometryChangeEvent : Event {
           constructor(DOMString type, WindowControlsOverlayGeometryChangeEventInit eventInitDict);
-          [SameObject] readonly attribute DOMRect boundingRect;
+          [SameObject] readonly attribute DOMRect titlebarAreaRect;
           readonly attribute boolean visible;
         };
 
         dictionary WindowControlsOverlayGeometryChangeEventInit : EventInit {
-          required DOMRect boundingRect;
+          required DOMRect titlebarAreaRect;
           boolean visible = false;
         };
       </pre>
@@ -220,24 +251,31 @@
       </section>
       <section>
         <h3>
-          The <dfn>getBoundingClientRect</dfn> method
+          The <dfn>getTitlebarAreaRect</dfn> method
         </h3>
         <p>
-          The `getBoundingClientRect()` method returns a DOMRect that
-          represents the available area for displaying web content. This
-          available title bar region does not include the area under the
-          [=window controls=] [=overlay=]. Web content SHOULD not be displayed
-          beneath the overlay.
-        </p>
+          The `getTitlebarAreaRect()` method returns a DOMRect that represents
+          the available area for displaying web content. This available title
+          bar region does not include the area under the [=window controls=]
+          [=overlay=].
+        </p><img src="spec-wco-gbr.png" alt=
+        "depiction of the area returned by the getTitlebarAreaRect method">
         <aside class="note">
           <p>
             The client viewport does not make any special considerations when
             rendering content with the WCO feature enabled. The content will be
             displayed in the same way that it would be displayed inside the
             browser window. In order to avoid content being hidden by the area
-            where the [=window controls=] are [=overlaid=], developers must use
-            the `getBoundingClientRect` method or the [=title bar area env
+            where the [=window controls=] are [=overlaid=], developers need to
+            use the `getTitlebarAreaRect` method or the [=title bar area env
             variables=].
+          </p>
+        </aside>
+        <aside class="note">
+          <p>
+            If a user agent does not support WCO, the developer can use
+            reasonable fallbacks for both the `display-override` using
+            `display` and the CSS variables and JS object accordingly.
           </p>
         </aside>
       </section>
@@ -247,12 +285,7 @@
         </h3>
         <p>
           The `ongeometrychange` attribute is an event handler whose
-          corresponding event handler event type is "change". The event is
-          dispatched when the available title bar region changes, e.g., in
-          response to the UA displaying the scope's origin during the launch of
-          the app, an extension or feature like file access or download
-          displaying an icon as part of the [=window controls=] [=overlay=], or
-          the window being resized.
+          corresponding event handler event type is "change".
         </p>
       </section>
     </section>
@@ -362,8 +395,41 @@
     </section>
     <section>
       <h2>
+        Integration with CSSOM
+      </h2>
+      <p>
+        This specification integrates with the [[cssom-view]] specification by
+        patching the <a href=
+        "https://www.w3.org/TR/cssom-view-1/#run-the-resize-steps">algorithm
+        below</a>:
+      </p>
+      <p>
+        In the viewport [=Window/resize=] algorithm, run [=resize the title bar
+        area=] after step 1.
+      </p>
+    </section>
+    <section>
+      <h2>
         Algorithms
       </h2>
+      <section>
+        <h3>
+          Resize the title bar area
+        </h3>
+        <p>
+          To <dfn data-lt="title bar region resizes">resize the title bar
+          area</dfn> for a window |win|, run these steps:
+        </p>
+        <ol>
+          <li>If |win|'s [=overlay=] has had its width or height changed (e.g.
+          as a result of the user resizing the browser window, or changing the
+          page zoom factor, or other UI appearing or disappearing on the
+          [=overlay=]), since the last time these steps were run, [=fire an
+          event=] named `ongeometrychange` at the {{Window/window}} object and
+          [=update the overlay area information=].
+          </li>
+        </ol>
+      </section>
       <section>
         <h3>
           Update the overlay area information
@@ -487,8 +553,8 @@
         Acknowledgments
       </h2>
       <p>
-        Huge thanks to Amanda Baker and Joshua Bell for their contributions to
-        this work.
+        Huge thanks to Amanda Baker, Joshua Bell and Yoav Weiss for their
+        contributions to this work.
       </p>
     </section>
     <section id="conformance"></section>
