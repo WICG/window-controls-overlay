@@ -47,13 +47,6 @@ This explainer will examine different techniques that could be developed to prov
 
 The title bar area of desktop applications is customized in many popular applications. The title bar area refers to the space to the left or right of the window controls (minimize, maximize, close etc.) and often contains the title of the application. On Windows, this area can be customized by the developer and apps based on Electron or Chromium Embedded Framework often reclaim this title bar space for frequently used UI like a search box, profile icon, new message icon etc.
 
-### Visual Studio Code
-Visual Studio Code is a popular code editor that ships on multiple desktop platforms.
-
-This screen shot shows how VS Code uses the title bar to maximize available screen real estate. They include the file name of the currently opened file and the top-level menu structure within the title bar space.
-
-![Visual Studio Code title bar](VSCode.png)
-
 ### Spotify
 Popular streaming music service Spotify uses the title bar space to maximize screen real estate to show the currently signed in user account, a search box and forward/back buttons designed specifically for the Spotify experience.
 
