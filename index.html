@@ -18,8 +18,16 @@
                     companyURL: "https://www.microsoft.com"}],
         github: "WICG/window-controls-overlay",
         shortName:"window-controls-overlay",
-        xref: { profile: "web-platform",
-                specs: ["geometry-1", "appmanifest", "cssom-view"] },
+        xref: {
+          profile: "web-platform",
+          specs: [
+            "appmanifest",
+            "cssom-view",
+            "geometry-1",
+            "manifest-incubations",
+            "MEDIAQUERIES-5"
+          ]
+        },
         group: "wicg",
 
       };
@@ -276,8 +284,9 @@
         <aside class="note">
           <p>
             If a user agent does not support WCO, the developer can use
-            reasonable fallbacks for both the `display-override` using
-            `display` and the CSS variables and JS object accordingly.
+            reasonable fallbacks for both the [=manifest/display_override=]
+            using [=manifest/display=] and the CSS variables and JS object
+            accordingly.
           </p>
         </aside>
       </section>
@@ -291,16 +300,31 @@
         </p>
       </section>
     </section>
-    <section data-cite="MEDIAQUERIES-5 manifest-incubations">
+    <section>
       <h2>
-        Addition of `window-controls-overlay` to the manifest
+        Addition of new [=display mode/window-controls-overlay=] [=display mode=]
+        </code>
       </h2>
       <p>
-        To enable the WCO feature, a new value will be added to the
-        <code>[=display_override=]</code> member of the manifest file. When the
-        `window-controls-overlay` value is specified in the
-        <code>[=display_override=]</code> the user agent SHOULD extend the
-        client area to the title bar if the [=display mode=] is supported.
+        This specification defines the following [=display mode=]:
+      </p>
+      <dl>
+        <dt>
+          <dfn data-export="" data-dfn-for="display mode">
+            window-controls-overlay
+          </dfn>
+        </dt>
+        <dd>
+          The web application opens with native OS window controls visible but
+          with the web contents extended to the rest of the title bar area. The
+          app will also be able to specify draggable regions in the web contents
+          to create a customized title bar.
+        </dd>
+     </dl>
+      <p>
+        The <code>[=display mode/window-controls-overlay=]</code>
+        [=display mode=] can be specified in the
+        <code>[=manifest/display_override=]</code> member of the manifest.
       </p>
       <aside class="issue">
         <p>
