@@ -291,15 +291,16 @@
         </p>
       </section>
     </section>
-    <section>
+    <section data-cite="MEDIAQUERIES-5 manifest-incubations">
       <h2>
         Addition of `window-controls-overlay` to the manifest
       </h2>
       <p>
         To enable the WCO feature, a new value will be added to the
-        `display-override` member of the manifest file. When the
-        `window-controls-overlay` value is specified in the `display-override`
-        the user agent SHOULD extend the client area to the title bar.
+        <code>[=display_override=]</code> member of the manifest file. When the
+        `window-controls-overlay` value is specified in the
+        <code>[=display_override=]</code> the user agent SHOULD extend the
+        client area to the title bar if the [=display mode=] is supported.
       </p>
       <aside class="issue">
         <p>
